@@ -38,6 +38,14 @@ router.get('/report', async (req, res) => {
 
         // Calculate total cost
         const totalCost = costs.reduce((sum, cost) => sum + cost.sum, 0);
+        // Group costs by category
+        const groupedCosts = costs.reduce((acc, cost) => {
+            if (!acc[cost.category]) {
+                acc[cost.category] = [];
+            }
+            acc[cost.category].push(cost);
+            return acc;
+        }, {})
 
         // Build response
         res.status(200).json({
@@ -45,7 +53,7 @@ router.get('/report', async (req, res) => {
             year,
             month,
             total_cost: totalCost,
-            items: costs,
+            categories: groupedCosts,
         });
     } catch (error) {
         console.error(error);

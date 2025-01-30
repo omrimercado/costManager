@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-const mongoURI = 'mongodb+srv://omrimercado16:OMRIMER12@cluster0.tzlys.mongodb.net/final?retryWrites=true&w=majority&appName=Cluster0'
+const mongoURI = process.env.MONGO_URI;
 /**
  * Connect to MongoDB Atlas
  */
