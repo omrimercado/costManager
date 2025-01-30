@@ -13,9 +13,10 @@ const Cost = require('../models/cost'); // Adjust the path to your Cost model
 router.get('/users/:id', async (req, res) => {
   try {
     const userId = req.params.id;
-
+    console.log("Searching for user with ID:", userId); // Debugging log
     // Find the user by ID
-    const user = await User.findOne({ id: userId });
+    const user = await User.findOne({ id:userId.toString() });
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
