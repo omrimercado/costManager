@@ -1,17 +1,19 @@
 // Import required modules
 const express = require('express');
+require('dotenv').config();
 const path = require('path');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-require('dotenv').config();
 
+// Create an Express application
+const app = express();
 /**
  * @constant {number} PORT - The port number for the server
  */
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 
 const mongoURI = process.env.MONGO_URI;
 /**
@@ -36,13 +38,12 @@ db.once('open', () => {
 });
 
 // Import route files
-const reportRoutes = require('./routes/report'); // Adjust path as necessary
-const userRoutes = require('./routes/users');   // Adjust path as necessary
+const reportRoutes = require('./routes/report');
+const userRoutes = require('./routes/users');
 const costRoutes = require('./routes/costs');
 const aboutRoutes = require('./routes/about');
 
-// Create an Express application
-const app = express();
+
 
 /**
  * Middleware setup
@@ -90,9 +91,6 @@ app.use((error, req, res, next) => {
     },
   });
 });
-/**
- * Start the Express server
- */
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 // Export the app instance
 module.exports = app;
