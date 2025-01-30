@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const Cost = require('../models/cost'); // Adjust the path based on your project structure
+const Cost = require('../models/cost'); // Import Cost model
 
 /**
  * @route GET /api/report
  * @description Generate a monthly cost report for a user
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
- * @returns {Object} - A report containing total cost and items
+ * @returns {Object} - A report containing total cost and grouped items
  */
 router.get('/report', async (req, res) => {
     try {
@@ -36,25 +36,28 @@ router.get('/report', async (req, res) => {
             created_at: { $gte: startDate, $lte: endDate },
         });
 
-        // Calculate total cost
-        const totalCost = costs.reduce((sum, cost) => sum + cost.sum, 0);
-        // Group costs by category
-        const groupedCosts = costs.reduce((acc, cost) => {
-            if (!acc[cost.category]) {
-                acc[cost.category] = [];
-            }
-            acc[cost.category].push(cost);
-            return acc;
-        }, {})
+        // Define all possible categories
+        const categories = ['food', 'health', 'housing', 'sport', 'education'];
 
-        // Build response
+        // Group costs by category with the required structure
+        let groupedCosts = categories.map(category => ({
+            [category]: costs
+                .filter(cost => cost.category === category)
+                .map(cost => ({
+                    sum: cost.sum,
+                    description: cost.description,
+                    day: new Date(cost.created_at).getDate(), // Extracting day from timestamp
+                }))
+        }));
+
+        // Build response object
         res.status(200).json({
-            user_id: id,
-            year,
-            month,
-            total_cost: totalCost,
-            categories: groupedCosts,
+            userid: id,
+            year: yearNum,
+            month: monthNum,
+            costs: groupedCosts
         });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'An error occurred while generating the report' });
